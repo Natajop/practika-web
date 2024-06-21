@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изучение JavaScript</title>
+</head>
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+#intro, #info, #content {
+    width: 70%;
+    max-width: 800px;
+    margin: 20px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.taskButton, #startButton, #backButton, #showOverlayButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.taskButton:hover, #startButton:hover, #backButton:hover {
+    background-color: #0056b3;
+}
+
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    color: #fff;ф
+    text-align: center;
+}
+
+.overlay-content {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 24px;
+}
+
+#showOverlayButton {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+    </style>
+
+<body>
+    <div id="intro">
+        <h1>Добро пожаловать в мир JavaScript!</h1>
+        <p>JavaScript — это язык программирования, который используется для создания динамического и интерактивного контента на
+            веб-страницах.</p>
+        <button id="startButton">Начать</button>
+    </div>
+
+    <div id="info" style="display:none;">
+        <h2>Общие сведения о JavaScript</h2>
+        <p><strong>Что такое JavaScript?</strong> JavaScript — это язык программирования, который выполняется в браузере. Он позволяет
+            пользователям взаимодействовать с веб-страницей, а разработчикам добавлять функции, такие как обновление контента без
+            перезагрузки, анимации, аудио и видео.</p>
+        <p><strong>Зачем нужен JavaScript?</strong> JavaScript используется для создания интерактивных веб-сайтов и веб-приложений. С его
+            помощью можно добавлять такие элементы, как слайдеры изображений, всплывающие окна, динамическое обновление данных и многое
+            другое. Основная цель JavaScript — сделать веб-страницы более живыми и удобными для пользователей.</p>
+        <p><strong>Для чего можно использовать JavaScript?</strong></p>
+        <ul>
+            <li>Динамическое изменение контента HTML и CSS.</li>
+            <li>Создание веб-приложений, как пример, работа с формами, валидация данных и отправка данных на сервер.</li>
+            <li>Анимация элементов на странице.</li>
+            <li>Работа с API и асинхронными запросами.</li>
+            <li>Создание игр и интерактивных элементов.</li>
+        </ul>
+        <p><strong>В каких случаях JavaScript не пригодится?</strong> JavaScript не подходит для создания серверных приложений и работы с
+            базами данных (хотя существуют серверные реализации, такие как Node.js). Он не используется для системного программирования,
+            разработки драйверов или работы с железом компьютера. Для этих задач используют другие языки программирования, такие как C,
+            C++ или Python.</p>
+        <button id="backButton">Назад</button>
+    </div>
+
+    <div id="content" style="display:none;">
+        <div class="menu">
+            <button class="taskButton" id="task1">Демонстрация Задачи 1</button>
+            <button class="taskButton" id="task2">Демонстрация Задачи 2</button>
+            <button class="taskButton" id="quizButton">Пройти тест</button>
+        </div>
+        <div id="taskContainer"></div>
+    </div>
+
+    <div id="overlay" style="display:none;">
+        <div class="overlay-content">
+            <p id="overlayText"></p>
+        </div>
+    </div>
+
+    <button id="showOverlayButton" style="display:none;">Показать заставку</button>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const startButton = document.getElementById('startButton');
+    const backButton = document.getElementById('backButton');
+    const intro = document.getElementById('intro');
+    const info = document.getElementById('info');
+    const content = document.getElementById('content');
+    const overlay = document.getElementById('overlay');
+    const overlayText = document.getElementById('overlayText');
+    const showOverlayButton = document.getElementById('showOverlayButton');
+    const taskButtons = document.querySelectorAll('.taskButton');
+    const taskContainer = document.getElementById('taskContainer');
+
+    let userName = localStorage.getItem('userName');
+    
+    if (!userName) {
+        userName = prompt('Пожалуйста, введите ваше имя:');
+        localStorage.setItem('userName', userName);
+    }
+
+    console.log('User name:', userName);
+
+    // Объявление функций
+    const displayOverlay = () => {
+        const currentDate = new Date().toLocaleDateString();
+        overlayText.textContent = `Привет, ${userName}! Сегодняшняя дата: ${currentDate}`;
+        overlay.style.display = 'flex';
+    };
+
+    const executeTask = taskId => {
+        if (taskId === 'task1') {
+            taskContainer.innerHTML = "<p>Показано решение первой задачи</p><p><code>// Ваш код для задачи 1</code></p>";
+        } else if (taskId === 'task2') {
+            taskContainer.innerHTML = "<p>Показано решение второй задачи</p><p><code>// Ваш код для задачи 2</code></p>";
+        } else if (taskId === 'quizButton') {
+            startQuiz();
+        }
+    };
+
+    const startQuiz = () => {
+        const questions = [
+            {question: 'Что такое JavaScript?', answer: 'Язык программирования для веб-страниц'},
+            {question: 'Можно ли изменять HTML с помощью JS?', answer: 'Да'},
+            {question: 'Что такое DOM в JavaScript?', answer: 'Document Object Model'},
+            {question: 'Что такое замыкание?', answer: 'Функция, которая запоминает свою лексическую среду'},
+            {question: 'Что делает метод addEventListener?', answer: 'Добавляет обработчик события к элементу'},
+            {question: 'Для чего используется метод querySelector?', answer: 'Для поиска элемента в документе'},
+            {question: 'Что такое асинхронность в JavaScript?', answer: 'Возможность выполнения операций без блокирования основного потока'},
+            {question: 'Как создать функцию в JavaScript?', answer: 'Используя ключевое слово function'},
+            {question: 'Что такое промисы в JavaScript?', answer: 'Объекты, используемые для обработки асинхронных действий'},
+            {question: 'Для чего используется метод map?', answer: 'Для создания нового массива, где каждый элемент преобразован функцией callback'}
+        ];
+
+        const userAnswers = [];
+        for (let i = 0; i < questions.length; i++) {
+            const userResponse = prompt(questions[i].question);
+            userAnswers.push({question: questions[i].question, answer: userResponse, correct: userResponse === questions[i].answer});
+        }
+
+        let result = 'Ваши результаты:\n';
+        userAnswers.forEach(answer => {
+            result += `${answer.question}\nВаш ответ: ${answer.answer} - ${answer.correct ? 'Верно' : 'Неверно'}\n`;
+        });
+
+        alert(result);
+    };
+
+    // Слушатели событий
+    startButton.addEventListener('click', () => {
+        intro.style.display = 'none';
+        info.style.display = 'block';
+    });
+
+    backButton.addEventListener('click', () => {
+        info.style.display = 'none';
+        content.style.display = 'block';
+        showOverlayButton.style.display = 'block';
+    });
+
+    taskButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const id = event.target.id;
+            console.log('Button clicked:', id);
+            executeTask(id);
+        });
+    });
+
+    showOverlayButton.addEventListener('click', displayOverlay);
+    
+    overlay.addEventListener('click', () => {
+        overlay.style.display = 'none';
+    });
+
+});
+    </script>
+</body>
+
+</html>
