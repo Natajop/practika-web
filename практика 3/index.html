@@ -225,6 +225,37 @@ h1, h2 {
         overlay.style.display = 'none';
     });
 
+
+            document.getElementById('task1').addEventListener('click', () => {
+    task0();
+});
+    
+function task0() {
+    let myVariable = 10;
+    let type = typeof myVariable;
+    let message = (type === 'number') ? "Это число!" : "Это не число!";
+    alert("Переменная myVariable имеет тип: " + type + "\n" + message);
+}
+    document.getElementById('task2').addEventListener('click', () => {
+    task1();
+});
+    
+      // Задача 1
+  function task1() {
+    let zodiac = prompt("Введите ваш знак зодиака:");
+    switch (zodiac) {
+      case "Овен":
+        alert("Привет, огненный Овен!");
+        break;
+      case "Телец":
+        alert("Привет, приземленный Телец!");
+        break;
+      // ... остальные знаки зодиака
+      default:
+        alert("Привет, загадочный знак зодиака!");
+    }
+  }
+
 });
     </script>
 </body>
